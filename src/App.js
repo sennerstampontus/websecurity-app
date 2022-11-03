@@ -7,6 +7,7 @@ function App() {
      const [messages, setMessages] = useState([]);
      const addMessages = (message) => {
           setMessages((state) => [...state, message]);
+          console.log(message);
      };
 
      return (
