@@ -1,0 +1,19 @@
+{
+  "Version": 1,
+  "Hash": "SPveC/74iIGveAKJlxNgjKa2/UfyivengSB+I1f4faE=",
+  "Source": "blog_post_api",
+  "BasePath": "_content/blog_post_api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "blog_post_api\\wwwroot",
+      "Source": "blog_post_api",
+      "ContentRoot": "C:\\Users\\Kappa\\Documents\\Programing\\websecurity\\websecurity-app\\BlogApi\\blog_post_api\\wwwroot\\",
+      "BasePath": "_content/blog_post_api",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
+}
