@@ -1,5 +1,55 @@
-.messages-container {
-     position: absolute;
-     top: 50%;
-     left: 10%;
+.post-card-container {
+     border: 1px solid white;
+     border-radius: 15px;
+     width: 60%;
+     height: auto;
+     padding: 2em;
+     position: relative;
+     top: 20%;
+     left: 50%;
+     transform: translateX(-50%);
+     margin: 3em 0;
+     display: flex;
+
+     p {
+          font-size: 0.8rem;
+          text-align: end;
+
+          span {
+               font-weight: 600;
+               font-size: 0.8rem;
+          }
+     }
+
+     .post-card-column {
+          flex: 2;
+          justify-items: center;
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-template-rows: 0.5fr 1fr 0.5fr;
+
+          .post-card-title {
+               font-size: 1.2rem;
+               font-weight: 700;
+               margin: 1em;
+               justify-self: start;
+          }
+     }
+}
+
+.image-container {
+     width: 60%;
+     margin: 1em 0;
+     img {
+          flex: 1;
+          position: relative;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: auto;
+     }
+     p {
+          padding-top: 1em;
+          text-align: start;
+     }
 }

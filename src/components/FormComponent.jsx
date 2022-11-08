@@ -5,6 +5,7 @@ const FormComponent = ({ addPost }) => {
      const [post, setPost] = useState({
           title: '',
           message: '',
+          selectedImage: null,
      });
 
      const handleChange = (e) => {
@@ -12,6 +13,8 @@ const FormComponent = ({ addPost }) => {
                ...data,
                [e.target.name]: e.target.value,
           }));
+
+          console.log(e.target.value);
      };
 
      const handleSubmit = (e) => {
@@ -25,9 +28,11 @@ const FormComponent = ({ addPost }) => {
                id: Date.now().toString(),
                title: post.title,
                message: post.message,
+               image: post.selectedImage,
           };
 
-          addPost(message);
+          console.log(message);
+          // addPost(message);
      };
 
      return (
@@ -52,6 +57,13 @@ const FormComponent = ({ addPost }) => {
                          />
                          <p className='text-error'>{error}</p>
                     </div>
+                    <input
+                         onChange={handleChange}
+                         className='form-file-input'
+                         type='file'
+                         name='selectedImage'
+                         accept='.png, .jpg'
+                    />
                     <button className='send-btn'>Lägg upp inlägg</button>
                </form>
           </div>

@@ -3,13 +3,17 @@ import React from 'react';
 const PostComponent = ({ message }) => {
      return (
           <>
-               <div style={{ display: 'flex', marginTop: '1rem' }}>
-                    <h1 style={{ marginRight: '1rem' }}>Rubrik:</h1>
-                    <p>{message.title}</p>
-               </div>
-               <div style={{ display: 'flex' }}>
-                    <h1 style={{ marginRight: '1rem' }}>Inlägg:</h1>
-                    <p>{message.message}</p>
+               <div className='post-card-container'>
+                    <div className='image-container'>
+                         <img src={message.image} alt='test.jpg' />
+                         <p>
+                              In skickat av: <span>{message.author}</span>
+                         </p>
+                    </div>
+                    <div className='post-card-column'>
+                         <p className='post-card-title'>{message.title}</p>
+                         <p>{message.message}</p>
+                    </div>
                </div>
           </>
      );

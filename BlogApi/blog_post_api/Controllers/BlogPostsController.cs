@@ -78,16 +78,39 @@ namespace blog_post_api.Controllers
         // POST: api/BlogPosts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<OutputPostModel>> CreeatePost(CreatePostModel model)
+        public async Task<ActionResult<OutputPostModel>> CreatePost(CreatePostModel model)
         {
             var _user = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
 
-            var post = new BlogPostsEntity(Guid.NewGuid().ToString(), model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
 
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            if(_user == null)
+            {
+                _context.Users.Add(new UserEntity(model.AppUserId));
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, post.PostMessage, post.CreatedDate, post.AppUserId));
+                var newUser = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
+
+                var post = new BlogPostsEntity(Guid.NewGuid().ToString(), model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, newUser);
+
+
+                _context.Posts.Add(post);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, post.PostMessage, post.CreatedDate, post.AppUserId));
+            }
+            else
+            {
+                var post = new BlogPostsEntity(Guid.NewGuid().ToString(), model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
+
+
+
+                _context.Posts.Add(post);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, post.PostMessage, post.CreatedDate, post.AppUserId));
+            }
+
+           
         }
 
         // DELETE: api/BlogPosts/5

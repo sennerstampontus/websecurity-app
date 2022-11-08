@@ -16,10 +16,16 @@ namespace blog_post_api.Controllers
     public class UserController : ControllerBase
     {
         private readonly SqlContext _context;
+        private readonly CreateUserModel _userModel;
 
         public UserController(SqlContext context)
         {
             _context = context;
+        }
+
+        public UserController()
+        {
+            
         }
 
         // GET: api/User
