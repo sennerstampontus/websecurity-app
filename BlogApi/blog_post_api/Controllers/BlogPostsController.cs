@@ -9,6 +9,9 @@ using blog_post_api.Data;
 using blog_post_api.Models.Entities;
 using blog_post_api.Models.OutputModels;
 using blog_post_api.Models.CreateModels;
+using System.Web;
+using Microsoft.AspNetCore.Authorization;
+using blog_post_api.Filters;
 
 namespace blog_post_api.Controllers
 {
@@ -17,6 +20,7 @@ namespace blog_post_api.Controllers
     public class BlogPostsController : ControllerBase
     {
         private readonly SqlContext _context;
+        private string[] _tagsAllowed = new string[] { "<b>", "</b>", "<i>", "</i>" };
 
         public BlogPostsController(SqlContext context)
         {
@@ -27,7 +31,23 @@ namespace blog_post_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BlogPostsEntity>>> GetPosts()
         {
-            return await _context.Posts.ToListAsync();
+
+            List<BlogPostsEntity> Messages = await _context.Posts.ToListAsync();
+            foreach(var message in Messages)
+            {
+                message.PostMessage = HttpUtility.HtmlDecode(message.PostMessage);
+            }
+
+            foreach(var tag in _tagsAllowed)
+            {
+                var encodedTag = HttpUtility.HtmlEncode(tag);
+                foreach(var message in Messages)
+                {
+                    message.PostMessage = message.PostMessage.Replace(encodedTag, tag);
+                }
+            }
+
+            return Messages;
         }
 
         // GET: api/BlogPosts/5
@@ -78,9 +98,17 @@ namespace blog_post_api.Controllers
         // POST: api/BlogPosts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [UseUserKey]
         public async Task<ActionResult<OutputPostModel>> CreatePost(CreatePostModel model)
         {
             var _user = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
+            string encodedMessage = HttpUtility.HtmlEncode(model.PostMessage);
+            foreach(var tag in _tagsAllowed)
+            {
+                var encodedTag = HttpUtility.HtmlEncode(tag);
+                encodedMessage = encodedMessage.Replace(encodedTag, tag);
+            }
+            
 
 
             if(_user == null)
@@ -90,24 +118,24 @@ namespace blog_post_api.Controllers
 
                 var newUser = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
 
-                var post = new BlogPostsEntity(model.Author, model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, newUser);
+                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, newUser);
 
 
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, post.PostMessage, post.CreatedDate, post.AppUserId));
+                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, encodedMessage, post.CreatedDate, post.AppUserId));
             }
             else
             {
-                var post = new BlogPostsEntity(model.Author, model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
+                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
 
 
 
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, post.PostMessage, post.CreatedDate, post.AppUserId));
+                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, encodedMessage, post.CreatedDate, post.AppUserId));
             }
 
            

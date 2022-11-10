@@ -3,7 +3,13 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { createPost } from '../functions/createPost';
 
 const FormComponent = ({ addPost }) => {
-     const { user } = useAuth0();
+     const { user, getIdTokenClaims } = useAuth0();
+     const getClaims = async () => {
+          const claims = await getIdTokenClaims();
+          const myClaim = (claims.sub = '1234');
+
+          return myClaim;
+     };
 
      const [error, setError] = useState('');
      const [alertMessage, setAlertMessage] = useState('');
@@ -34,7 +40,10 @@ const FormComponent = ({ addPost }) => {
                title: post.title,
                message: post.message,
                image: post.selectedImage || '',
+               claim: await getClaims(),
           };
+
+          // console.log(message);
 
           const res = await createPost(message);
           if (res === 201) {
@@ -52,7 +61,7 @@ const FormComponent = ({ addPost }) => {
                }, 2000);
           }
 
-          // addPost(message);
+          addPost(message);
      };
 
      const clearField = (error) => {

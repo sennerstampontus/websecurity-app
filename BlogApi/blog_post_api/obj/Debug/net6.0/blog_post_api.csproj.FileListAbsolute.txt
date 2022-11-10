@@ -534,3 +534,4 @@ C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_pos
 C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\obj\Debug\net6.0\blog_post_api.pdb
 C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\obj\Debug\net6.0\blog_post_api.genruntimeconfig.cache
 C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\obj\Debug\net6.0\ref\blog_post_api.dll
+C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
