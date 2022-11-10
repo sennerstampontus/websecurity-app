@@ -9,9 +9,10 @@ namespace blog_post_api.Models.Entities
         {
 
         }
-        public BlogPostsEntity(string id, string postTitle, string postMessage, string? fileName, IFormFile file, string createdDate, string appUserId, UserEntity user)
+        public BlogPostsEntity(string author, string postTitle, string postMessage, string? fileName, IFormFile file, string createdDate, string appUserId, UserEntity user)
         {
-            Id = id;
+
+            Author = author;
             PostTitle = postTitle;
             PostMessage = postMessage;
             FileName = fileName;
@@ -22,7 +23,11 @@ namespace blog_post_api.Models.Entities
         }
 
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        [Column(TypeName = "nvarchar(50)")]
+        public string Author { get; set; } = null!;
 
         [Required]
         [Column(TypeName = "nvarchar(50)")]

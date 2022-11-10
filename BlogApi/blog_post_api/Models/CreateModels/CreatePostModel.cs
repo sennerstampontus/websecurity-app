@@ -10,6 +10,7 @@
             set { appUserId = value; }
         }
 
+        public string Author { get; set; }
         public string PostTitle { get; set; }
         public string PostMessage { get; set; }
         public string FileName { get; set; }

@@ -1,7 +1,13 @@
 import { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { createPost } from '../functions/createPost';
 
 const FormComponent = ({ addPost }) => {
+     const { user } = useAuth0();
+
      const [error, setError] = useState('');
+     const [alertMessage, setAlertMessage] = useState('');
+     const [alertError, setAlertError] = useState(false);
      const [post, setPost] = useState({
           title: '',
           message: '',
@@ -13,11 +19,9 @@ const FormComponent = ({ addPost }) => {
                ...data,
                [e.target.name]: e.target.value,
           }));
-
-          console.log(e.target.value);
      };
 
-     const handleSubmit = (e) => {
+     const handleSubmit = async (e) => {
           e.preventDefault();
           if (!post.title || !post.message) {
                setError('Kan inte vara tomt');
@@ -25,14 +29,41 @@ const FormComponent = ({ addPost }) => {
           } else setError('');
 
           const message = {
-               id: Date.now().toString(),
+               id: user.sub,
+               author: user.name,
                title: post.title,
                message: post.message,
-               image: post.selectedImage,
+               image: post.selectedImage || '',
           };
 
-          console.log(message);
+          const res = await createPost(message);
+          if (res === 201) {
+               setAlertError(false);
+               setAlertMessage('Inlägg skickat');
+               setTimeout(() => {
+                    clearField(false);
+               }, 2000);
+               e.target.reset();
+          } else {
+               setAlertError(true);
+               setAlertMessage('Något gick fel, försök igen');
+               setTimeout(() => {
+                    clearField(true);
+               }, 2000);
+          }
+
           // addPost(message);
+     };
+
+     const clearField = (error) => {
+          if (!error) {
+               post.title = '';
+               post.message = '';
+               post.selectedImage = '';
+               setAlertMessage('');
+          } else {
+               setAlertMessage('');
+          }
      };
 
      return (
@@ -66,6 +97,17 @@ const FormComponent = ({ addPost }) => {
                     />
                     <button className='send-btn'>Lägg upp inlägg</button>
                </form>
+
+               {!alertError && (
+                    <div className='alert-message-success'>
+                         <h3>{alertMessage}</h3>
+                    </div>
+               )}
+               {alertError && (
+                    <div className='alert-message-error'>
+                         <h3>{alertMessage}</h3>
+                    </div>
+               )}
           </div>
      );
 };

@@ -90,7 +90,7 @@ namespace blog_post_api.Controllers
 
                 var newUser = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
 
-                var post = new BlogPostsEntity(Guid.NewGuid().ToString(), model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, newUser);
+                var post = new BlogPostsEntity(model.Author, model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, newUser);
 
 
                 _context.Posts.Add(post);
@@ -100,7 +100,7 @@ namespace blog_post_api.Controllers
             }
             else
             {
-                var post = new BlogPostsEntity(Guid.NewGuid().ToString(), model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
+                var post = new BlogPostsEntity(model.Author, model.PostTitle, model.PostMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
 
 
 

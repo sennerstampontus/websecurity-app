@@ -11,7 +11,7 @@ using blog_post_api.Data;
 namespace blog_post_api.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20221104140057_init")]
+    [Migration("20221110103318_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,12 +25,19 @@ namespace blog_post_api.Migrations
 
             modelBuilder.Entity("blog_post_api.Models.Entities.BlogPostsEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("CreatedDate")
                         .IsRequired()

@@ -72,7 +72,8 @@
           margin-top: 1em;
           color: #001a23;
           font-size: 0.7rem;
-          padding: 0.4em;
+          margin: 2rem 0;
+          padding: 1em;
           width: 100%;
           border-radius: 5px;
           border: none;
@@ -90,5 +91,24 @@
           margin: 0.4em;
           font-size: 0.8rem;
           color: #db5a42;
+     }
+
+     .alert-message-success {
+          position: absolute;
+          bottom: 10%;
+          right: 50%;
+          transform: translate(50%);
+          h3 {
+               color: hsl(148, 20%, 50%);
+          }
+     }
+     .alert-message-error {
+          position: absolute;
+          bottom: 10%;
+          right: 50%;
+          transform: translate(50%);
+          h3 {
+               color: hsl(0, 75%, 50%);
+          }
      }
 }

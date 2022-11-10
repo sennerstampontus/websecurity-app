@@ -12,13 +12,18 @@
      display: flex;
 
      p {
-          font-size: 0.8rem;
-          text-align: end;
+          font-size: 1.2rem;
+          text-align: start;
 
           span {
                font-weight: 600;
                font-size: 0.8rem;
           }
+     }
+     .post-author {
+          margin-top: 1em;
+          font-size: 0.7rem;
+          font-weight: 300;
      }
 
      .post-card-column {
@@ -33,6 +38,14 @@
                font-weight: 700;
                margin: 1em;
                justify-self: start;
+          }
+          .post-message {
+               font-size: 0.8rem;
+               text-align: center;
+               padding: 1rem 0.4rem;
+          }
+          .post-created {
+               font-size: 0.6rem;
           }
      }
 }

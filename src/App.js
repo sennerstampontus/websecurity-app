@@ -1,20 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './css/style.min.css';
 import FormComponent from './components/FormComponent';
 import PostsComponent from './components/PostsComponent';
 import Navbar from './components/Navbar';
 import { useAuth0 } from '@auth0/auth0-react';
+import { getAllPosts } from './functions/getAllPosts';
 
 function App() {
+     useEffect(() => {
+          async function fetchData() {
+               const postsArray = await getAllPosts();
+               const sortedList = postsArray.sort(
+                    (a, b) => parseInt(b.id) - parseInt(a.id)
+               );
+               setMessages(sortedList);
+          }
+
+          fetchData();
+     }, []);
+
      const [messages, setMessages] = useState([]);
-     const addMessages = (message) => {
+     const addMessages = async (message) => {
           setMessages((state) => [...state, message]);
-          console.log(message);
-     };
-     const [Authorized, setAuthorized] = useState(true);
-     const addAuth = (auth) => {
-          setAuthorized((state) => [...state, auth]);
      };
 
      const { isAuthenticated } = useAuth0();
@@ -35,10 +43,6 @@ function App() {
                          element={<PostsComponent messages={messages} />}
                     />
                </Routes>
-
-               {/* <div className='messages-container'>
-                    
-               </div> */}
           </>
      );
 }
