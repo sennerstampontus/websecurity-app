@@ -9,14 +9,13 @@ namespace blog_post_api.Models.Entities
         {
 
         }
-        public BlogPostsEntity(string author, string postTitle, string postMessage, string? fileName, IFormFile file, string createdDate, string appUserId, UserEntity user)
+        public BlogPostsEntity(string author, string postTitle, string postMessage, string? imageUrl, string createdDate, string appUserId, UserEntity user)
         {
 
             Author = author;
             PostTitle = postTitle;
             PostMessage = postMessage;
-            FileName = fileName;
-            File = file;
+            ImageUrl = imageUrl;
             CreatedDate = createdDate;
             AppUserId = appUserId;
             User = user;
@@ -37,10 +36,8 @@ namespace blog_post_api.Models.Entities
         [Column(TypeName = "nvarchar(max)")]
         public string PostMessage { get; set; } = null!;
 
-        public string? FileName { get; set; }
-        [NotMapped]
-        [Display(Name = "Upload File")]
-        public IFormFile File { get; set; }
+        public string? ImageUrl { get; set; }
+
 
         [Required]
         public string CreatedDate { get; set; } = null!;

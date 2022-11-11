@@ -11,7 +11,7 @@ using blog_post_api.Data;
 namespace blog_post_api.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20221110103318_init")]
+    [Migration("20221111144602_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace blog_post_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostMessage")

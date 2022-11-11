@@ -535,3 +535,8 @@ C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_pos
 C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\obj\Debug\net6.0\blog_post_api.genruntimeconfig.cache
 C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\obj\Debug\net6.0\ref\blog_post_api.dll
 C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\Azure.Core.dll
+C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\Azure.Storage.Blobs.dll
+C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\Azure.Storage.Common.dll
+C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\System.IO.Hashing.dll
+C:\Users\Kappa\Documents\Programing\websecurity\websecurity-app\BlogApi\blog_post_api\bin\Debug\net6.0\System.Memory.Data.dll

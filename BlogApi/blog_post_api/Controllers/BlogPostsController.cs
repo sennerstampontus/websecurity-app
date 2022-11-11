@@ -12,6 +12,7 @@ using blog_post_api.Models.CreateModels;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using blog_post_api.Filters;
+using Azure.Storage.Blobs;
 
 namespace blog_post_api.Controllers
 {
@@ -20,12 +21,30 @@ namespace blog_post_api.Controllers
     public class BlogPostsController : ControllerBase
     {
         private readonly SqlContext _context;
+        private BlobServiceClient serviceClient;
+        private BlobContainerClient containerClient;
+        private BlobClient blobClient;
         private string[] _tagsAllowed = new string[] { "<b>", "</b>", "<i>", "</i>" };
 
-        public BlogPostsController(SqlContext context)
+        public BlogPostsController(SqlContext context, IConfiguration configuration)
         {
             _context = context;
+
+
+            serviceClient = new BlobServiceClient(configuration.GetConnectionString("BlobString"));
+
+            try
+            {
+                containerClient = serviceClient.CreateBlobContainer("images");
+                containerClient.SetAccessPolicy(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
+            }
+            catch
+            {
+                containerClient = serviceClient.GetBlobContainerClient("images");
+            }
         }
+
+      
 
         // GET: api/BlogPosts
         [HttpGet]
@@ -33,15 +52,15 @@ namespace blog_post_api.Controllers
         {
 
             List<BlogPostsEntity> Messages = await _context.Posts.ToListAsync();
-            foreach(var message in Messages)
+            foreach (var message in Messages)
             {
                 message.PostMessage = HttpUtility.HtmlDecode(message.PostMessage);
             }
 
-            foreach(var tag in _tagsAllowed)
+            foreach (var tag in _tagsAllowed)
             {
                 var encodedTag = HttpUtility.HtmlEncode(tag);
-                foreach(var message in Messages)
+                foreach (var message in Messages)
                 {
                     message.PostMessage = message.PostMessage.Replace(encodedTag, tag);
                 }
@@ -98,9 +117,24 @@ namespace blog_post_api.Controllers
         // POST: api/BlogPosts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [UseUserKey]
-        public async Task<ActionResult<OutputPostModel>> CreatePost(CreatePostModel model)
+        
+        public async Task<ActionResult<OutputPostModel>> CreatePost([FromForm] CreatePostModel model)
         {
+
+            var imageUrl = "";
+
+            using var image = model.File.OpenReadStream();
+
+            blobClient = containerClient.GetBlobClient($"img_{Guid.NewGuid()}{Path.GetExtension(model.File.FileName)}");
+            var res = await blobClient.UploadAsync(image);
+            if (res.GetRawResponse().Status == 201)
+            {
+                imageUrl = blobClient.Uri.AbsoluteUri.ToString();
+
+            } else { imageUrl = ""; }
+
+
+
             var _user = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
             string encodedMessage = HttpUtility.HtmlEncode(model.PostMessage);
             foreach(var tag in _tagsAllowed)
@@ -118,24 +152,26 @@ namespace blog_post_api.Controllers
 
                 var newUser = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
 
-                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, newUser);
+                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, imageUrl, DateTime.Now.ToString(), model.AppUserId, newUser);
 
 
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, encodedMessage, post.CreatedDate, post.AppUserId));
+                return Created("Post created", post);
             }
             else
             {
-                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, model.FileName, null, DateTime.Now.ToString(), model.AppUserId, _user);
+                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, imageUrl, DateTime.Now.ToString(), model.AppUserId, _user);
 
 
 
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetBlogPostsEntity", new { id = post.Id }, new OutputPostModel(post.PostTitle, encodedMessage, post.CreatedDate, post.AppUserId));
+
+
+                return Created("Post created", post);
             }
 
            

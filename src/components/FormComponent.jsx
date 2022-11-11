@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { createPost } from '../functions/createPost';
+import axios from 'axios';
 
 const FormComponent = ({ addPost }) => {
      const { user, getIdTokenClaims } = useAuth0();
@@ -14,6 +15,7 @@ const FormComponent = ({ addPost }) => {
      const [error, setError] = useState('');
      const [alertMessage, setAlertMessage] = useState('');
      const [alertError, setAlertError] = useState(false);
+     const [imageSrc, setImageSrc] = useState('');
      const [post, setPost] = useState({
           title: '',
           message: '',
@@ -21,10 +23,23 @@ const FormComponent = ({ addPost }) => {
      });
 
      const handleChange = (e) => {
-          setPost((data) => ({
-               ...data,
-               [e.target.name]: e.target.value,
-          }));
+          if (e.target.name !== 'selectedImage') {
+               setPost((data) => ({
+                    ...data,
+                    [e.target.name]: e.target.value,
+               }));
+          } else {
+               let reader = new FileReader();
+               reader.readAsDataURL(e.target.files[0]);
+
+               reader.onload = (x) => {
+                    setImageSrc(x.target.result);
+               };
+               setPost((data) => ({
+                    ...data,
+                    [e.target.name]: e.target.files[0],
+               }));
+          }
      };
 
      const handleSubmit = async (e) => {
@@ -40,13 +55,20 @@ const FormComponent = ({ addPost }) => {
                title: post.title,
                message: post.message,
                image: post.selectedImage || '',
-               claim: await getClaims(),
           };
 
-          // console.log(message);
+          const formData = new FormData();
+          formData.append('appUserId', user.sub);
+          formData.append('author', user.name);
+          formData.append('postTitle', post.title);
+          formData.append('postMessage', post.message);
+          formData.append('file', post.selectedImage);
 
-          const res = await createPost(message);
-          if (res === 201) {
+          const res = await axios.post(
+               'https://localhost:7017/api/BlogPosts',
+               formData
+          );
+          if (res.status === 201) {
                setAlertError(false);
                setAlertMessage('Inlägg skickat');
                setTimeout(() => {
@@ -61,7 +83,7 @@ const FormComponent = ({ addPost }) => {
                }, 2000);
           }
 
-          addPost(message);
+          // addPost(message);
      };
 
      const clearField = (error) => {
@@ -97,12 +119,17 @@ const FormComponent = ({ addPost }) => {
                          />
                          <p className='text-error'>{error}</p>
                     </div>
+                    {imageSrc && (
+                         <div className='preview-container'>
+                              <img src={imageSrc} alt='' />
+                         </div>
+                    )}
                     <input
                          onChange={handleChange}
                          className='form-file-input'
                          type='file'
                          name='selectedImage'
-                         accept='.png, .jpg'
+                         accept='image/png'
                     />
                     <button className='send-btn'>Lägg upp inlägg</button>
                </form>

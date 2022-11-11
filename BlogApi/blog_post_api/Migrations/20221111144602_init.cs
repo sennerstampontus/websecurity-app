@@ -30,7 +30,7 @@ namespace blog_post_api.Migrations
                     Author = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     PostTitle = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     PostMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
