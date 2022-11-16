@@ -11,13 +11,15 @@ using blog_post_api.Models.OutputModels;
 using blog_post_api.Models.CreateModels;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
-using blog_post_api.Filters;
 using Azure.Storage.Blobs;
+
 
 namespace blog_post_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
+
     public class BlogPostsController : ControllerBase
     {
         private readonly SqlContext _context;
@@ -48,6 +50,7 @@ namespace blog_post_api.Controllers
 
         // GET: api/BlogPosts
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<BlogPostsEntity>>> GetPosts()
         {
 
@@ -117,62 +120,84 @@ namespace blog_post_api.Controllers
         // POST: api/BlogPosts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        
+        [Authorize]
+
+
+
+
         public async Task<ActionResult<OutputPostModel>> CreatePost([FromForm] CreatePostModel model)
         {
 
             var imageUrl = "";
 
-            using var image = model.File.OpenReadStream();
+            var checkExt = Path.GetExtension(model.File.FileName);
 
-            blobClient = containerClient.GetBlobClient($"img_{Guid.NewGuid()}{Path.GetExtension(model.File.FileName)}");
-            var res = await blobClient.UploadAsync(image);
-            if (res.GetRawResponse().Status == 201)
+            if (checkExt == ".png" || checkExt == ".jpg")
             {
-                imageUrl = blobClient.Uri.AbsoluteUri.ToString();
-
-            } else { imageUrl = ""; }
 
 
+                if (model.File != null)
+                {
+                    using var image = model.File.OpenReadStream();
 
-            var _user = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
-            string encodedMessage = HttpUtility.HtmlEncode(model.PostMessage);
-            foreach(var tag in _tagsAllowed)
-            {
-                var encodedTag = HttpUtility.HtmlEncode(tag);
-                encodedMessage = encodedMessage.Replace(encodedTag, tag);
+                    blobClient = containerClient.GetBlobClient($"img_{Guid.NewGuid()}{Path.GetExtension(model.File.FileName)}");
+
+                    var res = await blobClient.UploadAsync(image);
+                    if (res.GetRawResponse().Status == 201)
+                    {
+                        imageUrl = blobClient.Uri.AbsoluteUri.ToString();
+
+                    }
+                    else { imageUrl = ""; }
+                }
+
+
+
+
+
+                var _user = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
+                string encodedMessage = HttpUtility.HtmlEncode(model.PostMessage);
+                foreach (var tag in _tagsAllowed)
+                {
+                    var encodedTag = HttpUtility.HtmlEncode(tag);
+                    encodedMessage = encodedMessage.Replace(encodedTag, tag);
+                }
+
+
+
+                if (_user == null)
+                {
+                    _context.Users.Add(new UserEntity(model.AppUserId));
+                    await _context.SaveChangesAsync();
+
+                    var newUser = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
+
+                    var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, imageUrl, DateTime.Now.ToString(), model.AppUserId, newUser);
+
+
+                    _context.Posts.Add(post);
+                    await _context.SaveChangesAsync();
+
+                    return Created("Post created", post);
+                }
+                else
+                {
+                    var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, imageUrl, DateTime.Now.ToString(), model.AppUserId, _user);
+
+
+
+                    _context.Posts.Add(post);
+                    await _context.SaveChangesAsync();
+
+
+
+                    return Created("Post created", post);
+                }
+
             }
-            
+            else return BadRequest();
 
 
-            if(_user == null)
-            {
-                _context.Users.Add(new UserEntity(model.AppUserId));
-                await _context.SaveChangesAsync();
-
-                var newUser = await _context.Users.Where(x => x.AppUserId == model.AppUserId).FirstOrDefaultAsync();
-
-                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, imageUrl, DateTime.Now.ToString(), model.AppUserId, newUser);
-
-
-                _context.Posts.Add(post);
-                await _context.SaveChangesAsync();
-
-                return Created("Post created", post);
-            }
-            else
-            {
-                var post = new BlogPostsEntity(model.Author, model.PostTitle, encodedMessage, imageUrl, DateTime.Now.ToString(), model.AppUserId, _user);
-
-
-
-                _context.Posts.Add(post);
-                await _context.SaveChangesAsync();
-
-
-
-                return Created("Post created", post);
-            }
 
            
         }

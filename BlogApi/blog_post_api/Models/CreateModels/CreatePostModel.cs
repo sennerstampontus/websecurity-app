@@ -13,7 +13,7 @@
         public string Author { get; set; }
         public string PostTitle { get; set; }
         public string PostMessage { get; set; }
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
 
     }
 }

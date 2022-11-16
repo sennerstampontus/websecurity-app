@@ -8,6 +8,10 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { getAllPosts } from './functions/getAllPosts';
 
 function App() {
+     const [messages, setMessages] = useState([]);
+     const addMessages = async (message) => {
+          setMessages((state) => [...state, message]);
+     };
      useEffect(() => {
           async function fetchData() {
                const postsArray = await getAllPosts();
@@ -18,12 +22,7 @@ function App() {
           }
 
           fetchData();
-     }, []);
-
-     const [messages, setMessages] = useState([]);
-     const addMessages = async (message) => {
-          setMessages((state) => [...state, message]);
-     };
+     }, [messages]);
 
      const { isAuthenticated } = useAuth0();
 

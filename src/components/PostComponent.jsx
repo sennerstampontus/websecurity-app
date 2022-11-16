@@ -17,6 +17,9 @@ const PostComponent = ({ message }) => {
                               <p>{message.postTitle}</p>
                               <p className='post-author'>
                                    <i>{message.author}</i>
+                                   <p className='post-created'>
+                                        {message.createdDate}
+                                   </p>
                               </p>
                          </div>
 
@@ -30,7 +33,6 @@ const PostComponent = ({ message }) => {
                          >
                               {/* {message.postMessage} */}
                          </p>
-                         <p className='post-created'>{message.createdDate}</p>
                     </div>
                </div>
           </>

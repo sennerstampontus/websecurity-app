@@ -1,26 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { createPost } from '../functions/createPost';
 import axios from 'axios';
 
 const FormComponent = ({ addPost }) => {
-     const { user, getIdTokenClaims } = useAuth0();
-     const getClaims = async () => {
-          const claims = await getIdTokenClaims();
-          const myClaim = (claims.sub = '1234');
-
-          return myClaim;
-     };
+     const { user, getAccessTokenSilently } = useAuth0();
 
      const [error, setError] = useState('');
      const [alertMessage, setAlertMessage] = useState('');
      const [alertError, setAlertError] = useState(false);
      const [imageSrc, setImageSrc] = useState('');
+     const [accessToken, setAccessToken] = useState();
      const [post, setPost] = useState({
           title: '',
           message: '',
           selectedImage: null,
      });
+
+     useEffect(() => {
+          const getUserMetaData = async () => {
+               const domain = process.env.REACT_APP_AUTH_DOMAIN;
+
+               try {
+                    const accessToken = await getAccessTokenSilently({
+                         audience: `https://${domain}/api/v2/`,
+                         scope: 'read:user_idp_tokens',
+                    });
+
+                    setAccessToken(accessToken);
+               } catch (error) {
+                    console.error(error.message);
+               }
+          };
+          getUserMetaData();
+     }, [getAccessTokenSilently, user?.sub]);
 
      const handleChange = (e) => {
           if (e.target.name !== 'selectedImage') {
@@ -49,31 +61,33 @@ const FormComponent = ({ addPost }) => {
                return;
           } else setError('');
 
-          const message = {
-               id: user.sub,
-               author: user.name,
-               title: post.title,
-               message: post.message,
-               image: post.selectedImage || '',
-          };
-
           const formData = new FormData();
           formData.append('appUserId', user.sub);
           formData.append('author', user.name);
           formData.append('postTitle', post.title);
           formData.append('postMessage', post.message);
-          formData.append('file', post.selectedImage);
+          if (post.selectedImage == null) {
+               formData.append('file', post.selectedImage);
+               formData.delete('file');
+          } else formData.append('file', post.selectedImage);
+
+          const config = {
+               headers: {
+                    Authorization: `Bearer ${accessToken}`,
+               },
+          };
 
           const res = await axios.post(
                'https://localhost:7017/api/BlogPosts',
-               formData
+               formData,
+               config
           );
+
           if (res.status === 201) {
                setAlertError(false);
                setAlertMessage('Inlägg skickat');
-               setTimeout(() => {
-                    clearField(false);
-               }, 2000);
+               clearField(false);
+
                e.target.reset();
           } else {
                setAlertError(true);
@@ -83,15 +97,18 @@ const FormComponent = ({ addPost }) => {
                }, 2000);
           }
 
-          // addPost(message);
+          addPost(JSON.stringify(formData));
      };
 
      const clearField = (error) => {
           if (!error) {
                post.title = '';
                post.message = '';
-               post.selectedImage = '';
-               setAlertMessage('');
+               post.selectedImage = null;
+               setImageSrc('');
+               setTimeout(() => {
+                    setAlertMessage('');
+               }, 2000);
           } else {
                setAlertMessage('');
           }
@@ -129,7 +146,7 @@ const FormComponent = ({ addPost }) => {
                          className='form-file-input'
                          type='file'
                          name='selectedImage'
-                         accept='image/png'
+                         accept='image/png, .jpg'
                     />
                     <button className='send-btn'>Lägg upp inlägg</button>
                </form>
