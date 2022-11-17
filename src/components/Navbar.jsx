@@ -1,11 +1,7 @@
-import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const Navbar = ({ isAuthorized }) => {
-     //  const [Authorized, setAuthorized] = useState(false);
-     //  setAuthorized(true);
-
      const { loginWithRedirect, logout } = useAuth0();
 
      return (
@@ -14,11 +10,11 @@ const Navbar = ({ isAuthorized }) => {
                     <h1>Memwiki</h1>
                </div>
                <div className='navbar-links'>
-                    <NavLink to='/'>Blogg</NavLink>
+                    <NavLink to='/'>Blog posts</NavLink>
                     {isAuthorized && [
-                         <NavLink to='/create-post'>Skapa inlägg</NavLink>,
+                         <NavLink to='/create-post'>Create post</NavLink>,
                          <NavLink to='/logout' onClick={() => logout()}>
-                              Logga ut
+                              Logout
                          </NavLink>,
                     ]}
                     {!isAuthorized && (
@@ -26,7 +22,7 @@ const Navbar = ({ isAuthorized }) => {
                               className='navbar-login-btn'
                               onClick={() => loginWithRedirect()}
                          >
-                              Logga in
+                              Login
                          </button>
                     )}
                </div>

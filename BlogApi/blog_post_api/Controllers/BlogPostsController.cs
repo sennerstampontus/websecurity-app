@@ -51,6 +51,7 @@ namespace blog_post_api.Controllers
         // GET: api/BlogPosts
         [HttpGet]
 
+
         public async Task<ActionResult<IEnumerable<BlogPostsEntity>>> GetPosts()
         {
 
@@ -121,9 +122,6 @@ namespace blog_post_api.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
-
-
-
 
         public async Task<ActionResult<OutputPostModel>> CreatePost([FromForm] CreatePostModel model)
         {

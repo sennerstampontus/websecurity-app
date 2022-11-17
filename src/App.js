@@ -19,6 +19,8 @@ function App() {
                     (a, b) => parseInt(b.id) - parseInt(a.id)
                );
                setMessages(sortedList);
+
+               return postsArray;
           }
 
           fetchData();

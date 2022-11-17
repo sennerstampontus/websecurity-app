@@ -1,14 +1,22 @@
+.post-grid {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     grid-template-rows: repeat(1fr);
+     column-gap: 2rem;
+     row-gap: 2rem;
+     padding: 0 2em;
+     position: relative;
+     top: 0;
+     left: 50%;
+     transform: translateX(-50%);
+     width: 80%;
+}
+
 .post-card-container {
      border: 1px solid white;
      border-radius: 15px;
-     width: 60%;
-     height: auto;
+     height: 300px;
      padding: 2em;
-     position: relative;
-     top: 20%;
-     left: 50%;
-     transform: translateX(-50%);
-     margin: 3em 0;
      display: flex;
 
      p {
@@ -54,18 +62,27 @@
 }
 
 .image-container {
-     width: 45%;
+     width: 50%;
      margin: 1em 0;
+     flex: 1;
+
      img {
-          flex: 1;
           position: relative;
           top: 0;
           left: 0;
           width: 100%;
-          height: auto;
+          height: 100%;
+          object-fit: contain;
      }
      p {
           padding-top: 1em;
           text-align: start;
      }
+}
+
+h3 {
+     font-weight: 500;
+     font-style: italic;
+     text-align: center;
+     color: white;
 }

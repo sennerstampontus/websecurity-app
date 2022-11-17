@@ -23,7 +23,6 @@ const FormComponent = ({ addPost }) => {
                try {
                     const accessToken = await getAccessTokenSilently({
                          audience: `https://${domain}/api/v2/`,
-                         scope: 'read:user_idp_tokens',
                     });
 
                     setAccessToken(accessToken);
@@ -116,13 +115,13 @@ const FormComponent = ({ addPost }) => {
 
      return (
           <div className='form-container-box'>
-               <h1>Nytt inlägg</h1>
+               <h1>New post</h1>
                <form onSubmit={handleSubmit}>
                     <div className='form-style'>
                          <input
                               name='title'
                               className='input-header'
-                              placeholder='Ange rubrik'
+                              placeholder='Subject'
                               onChange={handleChange}
                          />
                          <p className='text-error'>{error}</p>
@@ -131,7 +130,7 @@ const FormComponent = ({ addPost }) => {
                          <textarea
                               name='message'
                               className='textfield-input'
-                              placeholder='Låt oss höra vad du vill säga..'
+                              placeholder={`Let's hear what you have to say...`}
                               onChange={handleChange}
                          />
                          <p className='text-error'>{error}</p>
@@ -148,7 +147,7 @@ const FormComponent = ({ addPost }) => {
                          name='selectedImage'
                          accept='image/png, .jpg'
                     />
-                    <button className='send-btn'>Lägg upp inlägg</button>
+                    <button className='send-btn'>Send post</button>
                </form>
 
                {!alertError && (
