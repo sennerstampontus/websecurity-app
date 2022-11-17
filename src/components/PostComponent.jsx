@@ -14,11 +14,13 @@ const PostComponent = ({ message }) => {
 
                     <div className='post-card-column'>
                          <div className='post-card-title'>
-                              <p>{message.postTitle}</p>
+                              <p>{DOMPurify.sanitize(message.postTitle)}</p>
                               <p className='post-author'>
-                                   <i>{message.author}</i>
+                                   <i>{DOMPurify.sanitize(message.author)}</i>
                                    <p className='post-created'>
-                                        {message.createdDate}
+                                        {DOMPurify.sanitize(
+                                             message.createdDate
+                                        )}
                                    </p>
                               </p>
                          </div>

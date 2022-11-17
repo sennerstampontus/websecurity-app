@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import DOMPurify from 'dompurify';
 import axios from 'axios';
 
 const FormComponent = ({ addPost }) => {
@@ -63,12 +64,13 @@ const FormComponent = ({ addPost }) => {
           const formData = new FormData();
           formData.append('appUserId', user.sub);
           formData.append('author', user.name);
-          formData.append('postTitle', post.title);
-          formData.append('postMessage', post.message);
+          formData.append('postTitle', DOMPurify.sanitize(post.title));
+          formData.append('postMessage', DOMPurify.sanitize(post.message));
           if (post.selectedImage == null) {
-               formData.append('file', post.selectedImage);
+               formData.append('file', DOMPurify.sanitize(post.selectedImage));
                formData.delete('file');
-          } else formData.append('file', post.selectedImage);
+          } else
+               formData.append('file', DOMPurify.sanitize(post.selectedImage));
 
           const config = {
                headers: {

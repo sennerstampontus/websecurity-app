@@ -128,13 +128,12 @@ namespace blog_post_api.Controllers
 
             var imageUrl = "";
 
-            var checkExt = Path.GetExtension(model.File.FileName);
-
-            if (checkExt == ".png" || checkExt == ".jpg")
-            {
-
 
                 if (model.File != null)
+                {
+                     var checkExt = Path.GetExtension(model.File.FileName);
+
+                if (checkExt == ".png" || checkExt == ".jpg")
                 {
                     using var image = model.File.OpenReadStream();
 
@@ -146,7 +145,9 @@ namespace blog_post_api.Controllers
                         imageUrl = blobClient.Uri.AbsoluteUri.ToString();
 
                     }
-                    else { imageUrl = ""; }
+                        else { imageUrl = ""; }
+                    }
+                    else return BadRequest();
                 }
 
 
@@ -192,8 +193,7 @@ namespace blog_post_api.Controllers
                     return Created("Post created", post);
                 }
 
-            }
-            else return BadRequest();
+            
 
 
 
