@@ -7,6 +7,7 @@ const Auth0ProviderWithHistory = ({ children }) => {
 
      const domain = process.env.REACT_APP_AUTH_DOMAIN;
      const client = process.env.REACT_APP_AUTH_CLIENT;
+     const audience = process.env.REACT_APP_AUTH_AUDIENCE;
 
      const onRedirectCallback = (appState) => {
           navigate(appState?.returnTo || window.location.pathname);
@@ -15,6 +16,7 @@ const Auth0ProviderWithHistory = ({ children }) => {
           <Auth0Provider
                domain={domain}
                clientId={client}
+               audience={audience}
                redirectUri={window.location.origin}
                onRedirectCallback={onRedirectCallback}
           >

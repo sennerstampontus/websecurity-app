@@ -19,20 +19,19 @@ const FormComponent = ({ addPost }) => {
 
      useEffect(() => {
           const getUserMetaData = async () => {
-               const domain = process.env.REACT_APP_AUTH_DOMAIN;
+               const audience = process.env.REACT_APP_AUTH_AUDIENCE;
 
                try {
                     const accessToken = await getAccessTokenSilently({
-                         audience: `https://${domain}/api/v2/`,
+                         audience: audience,
                     });
-
                     setAccessToken(accessToken);
                } catch (error) {
                     console.error(error.message);
                }
           };
           getUserMetaData();
-     }, [getAccessTokenSilently, user?.sub]);
+     }, [getAccessTokenSilently, user?.sub, accessToken]);
 
      const handleChange = (e) => {
           if (e.target.name !== 'selectedImage') {
@@ -69,8 +68,7 @@ const FormComponent = ({ addPost }) => {
           if (post.selectedImage == null) {
                formData.append('file', DOMPurify.sanitize(post.selectedImage));
                formData.delete('file');
-          } else
-               formData.append('file', DOMPurify.sanitize(post.selectedImage));
+          } else formData.append('file', post.selectedImage);
 
           const config = {
                headers: {
